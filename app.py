@@ -9,3 +9,4 @@ class Hoteis (Resource):
         return {"hoteis", "meus hoteis"}
 
 api.add_resource(Hoteis, "/hoteis")
+
