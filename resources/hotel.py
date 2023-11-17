@@ -51,6 +51,12 @@ class Hoteis (Resource):
         return {"hoteis" : hoteis}
     
 class Hotel (Resource):
+    def find_hotel(hotel_id):
+        for hotel in hoteis:
+            if hotel ['hotel_id'] == hotel_id:
+                return hotel
+        return None
+
     def get (self, hotel_id):
         for hotel in hoteis:
             if hotel ['hotel_id'] == hotel_id:
