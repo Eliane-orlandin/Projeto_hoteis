@@ -51,6 +51,13 @@ class Hoteis (Resource):
         return {"hoteis" : hoteis}
     
 class Hotel (Resource):
+
+    argumentos = reqparse.RequestParser()
+    argumentos.add_argument('nome')
+    argumentos.add_argument('estrelas')
+    argumentos.add_argument('diaria')
+    argumentos.add_argument('cidade')
+
     def find_hotel(self, hotel_id):
         for hotel in hoteis:
             if hotel ['hotel_id'] == hotel_id:
@@ -58,20 +65,13 @@ class Hotel (Resource):
         return None
 
     def get (self, hotel_id):
-        hotel = Hotel.find_hotel(hotel_id)
+        hotel = Hotel.find_hotel(self, hotel_id)
         if hotel:
             return hotel
         return {'message' : 'Hotel not found.'}, 404
 
     def post (self, hotel_id):
-        argumentos = reqparse.RequestParser()
-        argumentos.add_argument('nome')
-        argumentos.add_argument('estrelas')
-        argumentos.add_argument('diaria')
-        argumentos.add_argument('cidade')
-
-        dados = argumentos.parse_args()
-
+        dados = Hotel.argumentos.parse_args()
         novo_hotel = {
             'hotel_id' : hotel_id,
             'nome' : dados['nome'], 
@@ -79,9 +79,19 @@ class Hotel (Resource):
             'diaria' : dados['diaria'],
             'cidade' : dados['cidade']
         }
-
         hoteis.append(novo_hotel)
         return novo_hotel, 200
+    
+    def put(self, hotel_id):
+        dados = Hotel.argumentos.parse_args()
+        novo_hotel = {"hotel_id": hotel_id, **dados}
+        hotel = Hotel.find_hotel(self, hotel_id)
+        if hotel:
+            hotel.update(novo_hotel)
+            return novo_hotel, 200 # ok
+        hoteis.append(novo_hotel)
+        return novo_hotel, 201  # create / criado
+
     
 
         
