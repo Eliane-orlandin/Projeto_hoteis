@@ -58,9 +58,9 @@ class Hotel (Resource):
         return None
 
     def get (self, hotel_id):
-        for hotel in hoteis:
-            if hotel ['hotel_id'] == hotel_id:
-                return hotel
+        hotel = Hotel.find_hotel(hotel_id)
+        if hotel:
+            return hotel
         return {'message' : 'Hotel not found.'}, 404
 
     def post (self, hotel_id):
