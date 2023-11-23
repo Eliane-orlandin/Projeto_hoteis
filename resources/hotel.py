@@ -84,7 +84,12 @@ class Hotel (Resource):
             hotel.update(novo_hotel)
             return novo_hotel, 200 # ok
         hoteis.append(novo_hotel)
-        return novo_hotel, 201  # create / criado
+        return novo_hotel, 201  # create 
+    
+    def delete(self, hotel_id):
+        global hoteis
+        hoteis = [hotel for hotel in hoteis if hotel ["hotel_id"] != hotel_id]
+        return {"message" : "Hotel deleted."}
 
     
 
