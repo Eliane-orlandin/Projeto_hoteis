@@ -12,7 +12,7 @@ class HotelModel (banco.Model):
         self.hotel_id = hotel_id
         self.nome = nome
         self.estrelas = estrelas
-        self.diaria = diaria
+        self.diaria = diaria 
         self.cidade = cidade
 
     def json(self):
@@ -30,3 +30,6 @@ class HotelModel (banco.Model):
         if hotel:
             return hotel
         return None
+    
+    def save_hotel(self):
+        banco.session.add(self)
