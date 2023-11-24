@@ -1,4 +1,5 @@
 from sql_alchemy import banco
+
 class HotelModel (banco.Model):
     __tablename__ = 'hoteis'
     hotel_id = banco.Column (banco.String, primary_key=True)
@@ -6,7 +7,6 @@ class HotelModel (banco.Model):
     estrelas = banco.Column (banco.Float(precision=1))
     diaria = banco.Column (banco.Float(precision=2))
     cidade = banco.Column (banco.String(40))
-
 
     def __init__(self, hotel_id, nome, estrelas, diaria, cidade):
         self.hotel_id = hotel_id
@@ -23,3 +23,10 @@ class HotelModel (banco.Model):
             'diaria' : self.diaria,
             'cidade' : self.cidade
         }
+    
+    @classmethod
+    def find_hotel(cls, hotel_id):
+        hotel = cls.query.filter_by(hotel_id=hotel_id).first()
+        if hotel:
+            return hotel
+        return None
