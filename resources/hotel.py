@@ -14,14 +14,14 @@ class Hotel (Resource):
     argumentos.add_argument('cidade')
 
     def get (self, hotel_id):
-        hotel = Hotel.find_hotel(self, hotel_id)
+        hotel = HotelModel.find_hotel(hotel_id)
         if hotel:
-            return hotel
+            return hotel.json()
         return {'message' : 'Hotel not found.'}, 404
 
     def post (self, hotel_id):
         if HotelModel.find_hotel(hotel_id):
-            return {'messege' : 'Hotel id "{}" alredy exists.'.format(hotel_id)}, 400 # Bad request
+            return {"messege" : "Hotel id '{}' alredy exists.".format(hotel_id)}, 400 # Bad request
         dados = Hotel.argumentos.parse_args()
         hotel = HotelModel(hotel_id, **dados)
         hotel.save_hotel()
