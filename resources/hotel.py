@@ -38,7 +38,10 @@ class Hotel (Resource):
             hotel_encontrado.save_hotel()
             return hotel_encontrado.json(), 200 # ok
         hotel = HotelModel(hotel_id, **dados)
-        hotel.save_hotel()
+        try:
+            hotel.save_hotel()
+        except:
+            return { 'message' : 'An internal error ocurred trying to save hotel.'}, 500
         return hotel.json(), 201  # create 
     
     def delete(self, hotel_id):
