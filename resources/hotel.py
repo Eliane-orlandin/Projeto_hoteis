@@ -47,7 +47,10 @@ class Hotel (Resource):
     def delete(self, hotel_id):
         hotel = HotelModel.find_hotel(hotel_id)
         if hotel:
-            hotel.delete_hotel()
+            try:
+                hotel.delete_hotel()
+            except:
+                return {'messege' : 'An error ocurred trying to delete hotel.'}
             return {"message" : "Hotel deleted."}
         return {'message' : 'Hotel not found.'}, 404 
 
