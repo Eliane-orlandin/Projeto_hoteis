@@ -24,7 +24,10 @@ class Hotel (Resource):
             return {"messege" : "Hotel id '{}' alredy exists.".format(hotel_id)}, 400 # Bad request
         dados = Hotel.argumentos.parse_args()
         hotel = HotelModel(hotel_id, **dados)
-        hotel.save_hotel()
+        try:
+            hotel.save_hotel()
+        except:
+            return { 'message' : 'An internal error ocurred trying to save hotel.'}, 500
         return hotel.json()
     
     def put(self, hotel_id):
