@@ -17,4 +17,11 @@ class UserModel (banco.Model):
             'login' : self.login
         }
     
+    @classmethod
+    def find_user(cls, user_id):
+        user = cls.query.filter_by(user_id=user_id).first()
+        if user:
+            return user
+        return None
+    
     
