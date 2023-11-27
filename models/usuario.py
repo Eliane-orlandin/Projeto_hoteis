@@ -24,4 +24,7 @@ class UserModel (banco.Model):
             return user
         return None
     
+    def save_user(self):
+        banco.session.add(self)
+        banco.session.commit()
     
