@@ -1,1 +1,4 @@
 resources/__pycache__/
+__pycache__/
+instance/
+models/__pycache__/
