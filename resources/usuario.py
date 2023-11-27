@@ -2,6 +2,7 @@ from flask_restful import Resource, reqparse
 from models.usuario import UserModel
 from flask_jwt_extended import create_access_token
 from secrets import compare_digest
+
     
 atributos = reqparse.RequestParser()
 atributos.add_argument('login', type=str, required=True, help="The field 'login' cannot be left blank")
@@ -32,14 +33,5 @@ class UserRegister(Resource):
         user.save_user()
         return {'message' : 'User created successfully!'}, 201 # created
     
-class UserLogin(Resource):
-    @classmethod
-    def post (cls):
-        dados =  atributos.parse_args()
-        user = UserModel.find_by_login(dados['login'])
 
-        if user and compare_digest (user.senha, dados['senha']):
-            token_de_acesso = create_access_token(identity=user.user_id)
-            return {'access_token' : token_de_acesso}, 200
-        return {'messege' : 'The username or password is incorrect'}, 401  #Unauthorize
     
