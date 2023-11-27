@@ -7,4 +7,14 @@ class UserModel (banco.Model):
     login = banco.Column (banco.String(40))
     senha = banco.Column (banco.String(40))
 
+    def __init__(self, login, senha):
+        self.login = login
+        self.senha = senha
+
+    def json(self):
+        return {
+            'user_id' : self.user_id,
+            'login' : self.login
+        }
+    
     
