@@ -1,9 +1,22 @@
 from flask_restful import Resource, reqparse
 from models.hotel import HotelModel
 from flask_jwt_extended import jwt_required
+import sqlite3
+
+    
+
+path_params = reqparse.RequestParser()
+path_params.add_argument('cidade', type = str)
+path_params.add_argument('estrelas_min', type = float)
+path_params.add_argument('estrelas_max', type = float)
+path_params.add_argument('diaria_min', type = float)
+path_params.add_argument('diaria_max', type = float)
+path_params.add_argument('limit', type = float)
+path_params.add_argument('offset', type = float)
 
 class Hoteis (Resource):
     def get (self):
+        
         return {"hoteis" : [hotel.json() for hotel in HotelModel.query.all()]}
     
 class Hotel (Resource):
@@ -37,7 +50,7 @@ class Hotel (Resource):
         dados = Hotel.argumentos.parse_args()
         hotel_encontrado = HotelModel.find_hotel(hotel_id)
         if hotel_encontrado:
-            hotel_encontrado.update(**dados)
+            hotel_encontrado.update_hotel(**dados)
             hotel_encontrado.save_hotel()
             return hotel_encontrado.json(), 200 # ok
         hotel = HotelModel(hotel_id, **dados)
