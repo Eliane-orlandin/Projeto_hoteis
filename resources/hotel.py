@@ -39,37 +39,31 @@ path_params.add_argument('diaria_max', type = float)
 path_params.add_argument('limit', type = float)
 path_params.add_argument('offset', type = float)
 
-class Hoteis (Resource):
-    def get (self):
-        connection = sqlite3.connect('banco.db')
-        cursor = connection.cursor()
+class Hoteis(Resource):
+    query_params = reqparse.RequestParser()
+    query_params.add_argument("cidade", type=str, default="", location="args")
+    query_params.add_argument("estrelas_min", type=float, default=0, location="args")
+    query_params.add_argument("estrelas_max", type=float, default=0, location="args")
+    query_params.add_argument("diaria_min", type=float, default=0, location="args")
+    query_params.add_argument("diaria_max", type=float, default=0, location="args")
 
-        dados =  path_params.parse_args()
-        dados_validos = {chave : dados [chave] for chave in dados if dados [chave] is not None}
-        parametros = normalize_path_params(**dados_validos)
+    def get(self):
+        filters = Hoteis.query_params.parse_args()
 
-        if not parametros.get('cidade'):
-            consulta = "SELECT * FROM hoteis WHERE (estrelas > ? and estrelas < ?) and (diaria > ? and diaria < ?) LIMIT ? OFFSET ?""
-            tupla = tuple([parametros[chave] for chave in parametros])
-            resultado = cursor.execute(consulta, tupla)
-        else:
-            consulta = "SELECT * FROM hoteis WHERE (estrelas > ? and estrelas < ?) and (diaria > ? and diaria < ?) and cidade = ? LIMIT ? OFFSET ?"
-            tupla = tuple([parametros[chave] for chave in parametros])
-            resultado = cursor.execute(consulta, tupla)
-        
-        hoteis = []
-        for linha in resultado:
-            hoteis.append({
-                'hotel_id' : linha [0],
-                'nome' : linha [1],
-                'estrelas' : linha [2],
-                'diaria' : linha [3],
-                'cidade' : linha [4]
+        query = HotelModel.query
 
-            })
-        
-        
-        return {"hoteis" : [hotel.json() for hotel in HotelModel.query.all()]}
+        if filters["cidade"]:
+            query = query.filter(HotelModel.cidade == filters["cidade"])
+        if filters["estrelas_min"]:
+            query = query.filter(HotelModel.estrelas >= filters["estrelas_min"])
+        if filters["estrelas_max"]:
+            query = query.filter(HotelModel.estrelas <= filters["estrelas_max"])
+        if filters["diaria_min"]:
+            query = query.filter(HotelModel.diaria >= filters["diaria_min"])
+        if filters["diaria_max"]:
+            query = query.filter(HotelModel.diaria <= filters["diaria_max"])
+
+        return {"hoteis": [hotel.json() for hotel in query]}
     
 class Hotel (Resource):
 
