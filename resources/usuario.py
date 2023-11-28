@@ -1,8 +1,7 @@
 from flask_restful import Resource, reqparse
 from models.usuario import UserModel
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, jwt_required
 from secrets import compare_digest
-
     
 atributos = reqparse.RequestParser()
 atributos.add_argument('login', type=str, required=True, help="The field 'login' cannot be left blank")
@@ -15,6 +14,7 @@ class User (Resource):
             return user.json()
         return {'message' : 'User not found.'}, 404
     
+    @jwt_required()
     def delete(self, user_id):
         user = UserModel.find_user(user_id)
         if user:
@@ -26,6 +26,7 @@ class UserRegister(Resource):
     # cadastro
     def post (self):
         dados = atributos.parse_args()
+
         if UserModel.find_by_login(dados ['login']):
             return {'messege' : "The login '{}' already exists.".format(dados ['login'])}
         
@@ -33,5 +34,14 @@ class UserRegister(Resource):
         user.save_user()
         return {'message' : 'User created successfully!'}, 201 # created
     
+class UserLogin(Resource):
+    @classmethod
+    def post (cls):
+        dados =  atributos.parse_args()
+        user = UserModel.find_by_login(dados['login'])
 
+        if user and compare_digest (user.senha, dados['senha']):
+            token_de_acesso = create_access_token(identity=user.user_id)
+            return {'access_token' : token_de_acesso}, 200
+        return {'messege' : 'The username or password is incorrect'}, 401  #Unauthorize
     
